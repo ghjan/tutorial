@@ -13,11 +13,11 @@ class DmoztoolsSpider(scrapy.Spider):
         # filename = response.url.split('/')[-2] + ".html"
         # with open(filename, 'wb') as fp:
         #     fp.write(response.body)
-        div_site_item = response.xpath('//*[@id="site-list-content"]/div')
+        div_site_item = response.xpath("//*[@id='site-list-content']/div/div[@class='title-and-desc']")
         for site_item in div_site_item:
             item = TutorialItem()
-            item['title'] = site_item.css('div.title-and-desc div.site-title::text')
-            # item['desc'] = site_item.css('div.title-and-desc div.site-descr::text')
-            item['desc'] = site_item.xpath('div.title-and-desc > div/text()')
-            item['link'] = site_item.css('div.title-and-desc a::attr(href)')
+            item['title'] = site_item.css('div.site-title::text')
+            # item['desc'] = site_item.css('div.site-descr::text')
+            item['desc'] = site_item.xpath("div[@class ='site-descr']/text()")
+            item['link'] = site_item.css('a::attr(href)')
             yield item
