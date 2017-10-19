@@ -19,3 +19,4 @@ class DmoztoolsSpider(scrapy.Spider):
             item['title'] = site_item.css('div.title-and-desc div.site-title::text')
             item['desc'] = site_item.css('div.title-and-desc div.site-descr::text')
             item['link'] = site_item.css('div.title-and-desc a::attr(href)')
+            yield item
