@@ -1,5 +1,6 @@
 FROM alpine:latest
 MAINTAINER <cajan2>
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN apk -U add \
         gcc \
         libffi-dev \
