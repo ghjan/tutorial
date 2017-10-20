@@ -15,6 +15,7 @@ RUN apk -U add \
     && update-ca-certificates \
     && rm -rf /var/cache/apk/* \
     && pip install --upgrade pip \
+RUN mkdir -p /runtime/app
 WORKDIR /runtime/app
 COPY requirements.txt /runtime/app
 RUN  pip install -r requirements.txt
