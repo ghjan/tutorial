@@ -10,11 +10,10 @@ RUN apk -U add  \
         musl-dev \
         openssl-dev \
         curl ca-certificates \
-        python3 && \
-    python3 -m ensurepip && \
-    && curl ca-certificates \
+        python3 \
+        curl ca-certificates \
     && update-ca-certificates \
-    && rm -rf /var/cache/apk/* \
+    && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /runtime/app
 WORKDIR /runtime/app
