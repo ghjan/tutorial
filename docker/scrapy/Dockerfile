@@ -19,7 +19,7 @@ RUN apk -U add \
 RUN mkdir -p /runtime/app
 WORKDIR /runtime/app
 COPY requirements.txt /runtime/app
-RUN  pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/
+RUN  pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 
 
 
