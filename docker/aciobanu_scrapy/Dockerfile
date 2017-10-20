@@ -1,6 +1,5 @@
 FROM alpine:latest
-MAINTAINER <cajan2>
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+
 RUN apk -U add \
         gcc \
         libffi-dev \
@@ -15,9 +14,12 @@ RUN apk -U add \
     && update-ca-certificates \
     && rm -rf /var/cache/apk/* \
     && pip install --upgrade pip \
+    && pip install Scrapy
+
 WORKDIR /runtime/app
-COPY requirements.txt /runtime/app
-RUN  pip install -r requirements.txt
 
+COPY entrypoint.sh /runtime/entrypoint.sh
+RUN chmod +x /runtime/entrypoint.sh
 
-
+ENTRYPOINT ["/runtime/entrypoint.sh"]
+CMD ["scrapy"]
