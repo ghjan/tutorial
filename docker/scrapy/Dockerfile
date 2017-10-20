@@ -16,7 +16,7 @@ RUN apk -U add \
     && rm -rf /var/cache/apk/* \
     && pip install --upgrade pip \
 
-COPY ./requirements.txt .
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 WORKDIR /runtime/app
