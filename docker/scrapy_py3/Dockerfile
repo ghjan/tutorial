@@ -1,16 +1,16 @@
-FROM alpine:3.6
+FROM alpine:latest
 MAINTAINER <cajan2>
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
-RUN apk -U add \
+RUN apk -U add  \
         gcc \
         libffi-dev \
         libxml2-dev \
         libxslt-dev \
         musl-dev \
         openssl-dev \
-        curl ca-certificates \ &&
-    apk add --no-cache python3 && \
+        curl ca-certificates \
+        python3 && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
     pip3 install --upgrade pip setuptools && \
