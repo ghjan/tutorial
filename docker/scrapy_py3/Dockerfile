@@ -11,9 +11,11 @@ RUN apk -U add  \
         openssl-dev \
         curl ca-certificates \
         python3 \
+        py-pip \
         curl ca-certificates \
     && update-ca-certificates \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && pip install --upgrade pip
 
 RUN mkdir -p /runtime/app
 WORKDIR /runtime/app
