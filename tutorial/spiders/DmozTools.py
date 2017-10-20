@@ -16,8 +16,8 @@ class DmoztoolsSpider(scrapy.Spider):
         div_site_item = response.xpath("//*[@id='site-list-content']/div/div[@class='title-and-desc']")
         for site_item in div_site_item:
             item = TutorialItem()
-            item['title'] = site_item.css('div.site-title::text')
+            item['title'] = site_item.css('div.site-title::text').extract_first()
             item['desc'] = site_item.css('div.site-descr::text').extract_first()
             # item['desc'] = site_item.xpath(".//div[@class ='site-descr']/text()").extract_first()
-            item['link'] = site_item.css('a::attr(href)')
+            item['link'] = site_item.css('a::attr(href)').extract_first()
             yield item
