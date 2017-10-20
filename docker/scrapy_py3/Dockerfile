@@ -12,14 +12,9 @@ RUN apk -U add  \
         curl ca-certificates \
         python3 && \
     python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    rm -r /root/.cache \
     && curl ca-certificates \
     && update-ca-certificates \
     && rm -rf /var/cache/apk/* \
-    && pip install --upgrade pip
 
 RUN mkdir -p /runtime/app
 WORKDIR /runtime/app
