@@ -58,7 +58,7 @@ ROBOTSTXT_OBEY = True
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 # EXTENSIONS = {
-#    'scrapy.extensions.telnet.TelnetConsole': None,
+#    'scrapy_py2.extensions.telnet.TelnetConsole': None,
 # }
 
 # Configure item pipelines
@@ -90,7 +90,7 @@ ITEM_PIPELINES = {
 # HTTPCACHE_EXPIRATION_SECS = 0
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
-# HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+# HTTPCACHE_STORAGE = 'scrapy_py2.extensions.httpcache.FilesystemCacheStorage'
 
 # Mysql数据库的配置信息
 MYSQL_HOST = '127.0.0.1'

@@ -5,9 +5,17 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from twisted.enterprise import adbapi
-import pymysql
 
-pymysql.install_as_MySQLdb()
+try:  # py3
+    import pymysql
+
+    CURSORCLASS = pymysql.cursors.DictCursor
+    pymysql.install_as_MySQLdb()
+except: # py2
+    import MySQLdb
+
+    CURSORCLASS = MySQLdb.cursors.DictCursor
+
 import codecs
 import json
 
@@ -47,7 +55,7 @@ class WebcrawlerScrapyPipeline(object):
                                           db='crawlpicturesdb',
                                           user='root',
                                           passwd='123456',
-                                          cursorclass=pymysql.cursors.DictCursor,
+                                          cursorclass=CURSORCLASS,
                                           charset='utf8',
                                           use_unicode=False)'''
 
@@ -62,7 +70,7 @@ class WebcrawlerScrapyPipeline(object):
             user=settings['MYSQL_USER'],
             passwd=settings['MYSQL_PASSWD'],
             charset='utf8',  # 编码要加上，否则可能出现中文乱码问题
-            cursorclass=pymysql.cursors.DictCursor,
+            cursorclass=CURSORCLASS,
             use_unicode=False,
         )
         dbpool = adbapi.ConnectionPool('MySQLdb', **dbparams)  # **表示将字典扩展为关键字参数,相当于host=xxx,db=yyy....
