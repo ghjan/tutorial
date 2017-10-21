@@ -93,7 +93,7 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = 'scrapy_py2.extensions.httpcache.FilesystemCacheStorage'
 
 # Mysql数据库的配置信息
-MYSQL_HOST = '106.14.202.116'
+MYSQL_HOST = '139.224.219.76'
 MYSQL_DBNAME = 'testdb'  # 数据库名字，请修改
 MYSQL_USER = 'root'  # 数据库账号，请修改
 MYSQL_PASSWD = '123456'  # 数据库密码，请修改
