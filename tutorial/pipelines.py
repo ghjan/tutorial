@@ -51,7 +51,7 @@ class WebcrawlerScrapyPipeline(object):
         self.dbpool = dbpool
         ''' 这里注释中采用写死在代码中的方式连接线程池，可以从settings配置文件中读取，更加灵活
             self.dbpool=adbapi.ConnectionPool('MySQLdb',
-                                          host='mysql',
+                                          host=settings['MYSQL_HOST'] or 'mysql',
                                           db='crawlpicturesdb',
                                           user='root',
                                           passwd='123456',

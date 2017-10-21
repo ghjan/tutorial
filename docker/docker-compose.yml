@@ -7,7 +7,7 @@ services:
         command: bash
         ports:
             - "50080:80"
-        link: mysql
+        links: mysql
     mysql:
         image: mysql
         command: bash
