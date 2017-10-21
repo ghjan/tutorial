@@ -1,0 +1,11 @@
+FROM scrapinghub/scrapinghub-stack-scrapy:1.4-py3
+MAINTAINER <cajan2>
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN mkdir -p /runtime/app
+WORKDIR /runtime/app
+COPY requirements.txt /runtime/app
+RUN  pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+
+
+
