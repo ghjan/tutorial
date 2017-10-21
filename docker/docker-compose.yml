@@ -3,14 +3,14 @@ services:
     scrapy:
         image: scrapinghub/scrapinghub-stack-scrapy:1.4-py3
         volumes:
-            - ../..:/runtime/app
+            - ..:/runtime/app
         command: bash
         ports:
             - "50080:80"
         link: mysql
     mysql:
         image: mysql
-        command: python manage.py celerybeat --logfile=/var/log/celery/model_deploybeat.log  --pid=/var/run/celery/celerybeat.pid
+        command: bash
         environment:
             - MYSQL_ROOT_PASSWORD=123456
         volumes:
