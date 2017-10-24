@@ -99,6 +99,7 @@ class GetIp(Singleton):
             http = [item.split(':') for item in IPPOOL_BACKUP_HTTP]
             https = [item.split(':') for item in IPPOOL_BACKUP_HTTPS]
         else:
+            print("use result successfully!")
             http = [h[0:2] for h in self.result if h[2] == "HTTP" and self.judge_ip(h)]
             https = [h[0:2] for h in self.result if h[2] == "HTTPS" and self.judge_ip(h)]
         print("Http: ", len(http), "Https: ", len(https))
