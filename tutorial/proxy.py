@@ -40,11 +40,11 @@ def use_proxy(browser, proxy, url):
 
 class GetIp(Singleton):
     def __init__(self):
-        sql = '''SELECT  `IP`,`PORT`,`TYPE`
+        sql = '''SELECT  `ip`,`port`,`type`
         FROM  `ips`
-        WHERE `TYPE` REGEXP  'HTTP|HTTPS'
-        AND  `SPEED`<5 OR `SPEED` IS NULL
-        ORDER BY `proxy`.`TYPE` ASC
+        WHERE `type` REGEXP  'HTTP|HTTPS'
+        AND  `speed`<5 OR `speed` IS NULL
+        ORDER BY `type` ASC
         LIMIT 50 '''
         DBHelp().query(sql, self._after_query)
         self.result = None
