@@ -1,7 +1,8 @@
-from .handledb import exec_sql
+from .handledb import DBHelp
 import urllib.request, urllib.error, urllib.parse
 
 from tutorial.settings import MYSQL_HOST, MYSQL_DBNAME, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWD
+from .singleton import Singleton
 
 dbapi = "MySQLdb"
 kwargs = {'user': MYSQL_USER, 'passwd': MYSQL_PASSWD, 'db': MYSQL_DBNAME, 'host': MYSQL_HOST, 'port': MYSQL_PORT,
@@ -35,16 +36,6 @@ def use_proxy(browser, proxy, url):
     return browser
 
 
-class Singleton(object):
-    '''Signal instance example.'''
-
-    def __new__(cls, *args, **kw):
-        if not hasattr(cls, '_instance'):
-            orig = super(Singleton, cls)
-            cls._instance = orig.__new__(cls, *args, **kw)
-        return cls._instance
-
-
 class GetIp(Singleton):
     def __init__(self):
         sql = '''SELECT  `IP`,`PORT`,`TYPE`
@@ -53,14 +44,18 @@ class GetIp(Singleton):
         AND  `SPEED`<5 OR `SPEED` IS NULL
         ORDER BY `proxy`.`TYPE` ASC
         LIMIT 50 '''
-        self.result = exec_sql(sql, **kwargs)
+        DBHelp().query(sql, self._after_query)
+
+    def _after_query(self, rs):
+        print("success for query ips; len(result):{}".format(len(rs)))
+        self.result = rs
 
     def del_ip(self, record):
         '''delete ip that can not use'''
         sql = "delete from ips where IP='%s' and PORT='%s'" % (record[0], record[1])
         print(sql)
 
-        exec_sql(sql, **kwargs)
+        DBHelp().exec_sql(sql)
         print(record, " was deleted.")
 
     def judge_ip(self, record):

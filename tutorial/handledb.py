@@ -19,77 +19,71 @@ except:  # py2
 
     CURSORCLASS = MySQLdb.cursors.DictCursor
 
-
-def get_db(**kwargs):
-    '''connect database,return link resource'''
-    try:
-        db = MySQLdb.connect(**kwargs)
-    except Exception as e:
-        print("Link DB error:", e)
-    else:
-        return db
+from scrapy.utils.project import get_project_settings
+from .singleton import Singleton
 
 
-def create_table(data, primary, table, **kwargs):
-    ''' Create table for storing resume data. '''
-    sql = 'create table if not exists `%s`(%s) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci'
-    ps = ["`%s` text" % x for x in data] + ([primary, ] if primary else [])
-    paras = ','.join(ps)
-    SQL = sql % (table, paras)
-    exec_sql(SQL, **kwargs)
+class DBHelp(Singleton):
+    def __init__(self):
+        self.settings = get_project_settings()  # 获取settings配置，设置需要的信息
 
+        self.host = self.settings['MYSQL_HOST']
+        self.port = self.settings['MYSQL_PORT']
+        self.user = self.settings['MYSQL_USER']
+        self.passwd = self.settings['MYSQL_PASSWD']
+        self.db = self.settings['MYSQL_DBNAME']
 
-def exec_sql(sql, data='', **kwargs):
-    '''execute insert sql and other operation'''
-    conn = get_db(**kwargs)
-    cur = conn.cursor()
-    if data == '':
-        cur.execute(sql)
-    else:
-        cur.execute(sql, data)
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
-    conn.close()
-    return result
+        dbparams = dict(
+            host=self.host,  # 读取settings中的配置
+            port=self.port,
+            user=self.user,
+            passwd=self.passwd,
+            db=self.db,
+            charset='utf8',  # 编码要加上，否则可能出现中文乱码问题
+            cursorclass=CURSORCLASS,
+            use_unicode=False,
+        )
+        self.dbpool = adbapi.ConnectionPool('MySQLdb', **dbparams)  # **表示将字典扩展为关键字参数,相当于host=xxx,db=yyy..
 
+    # 查询数据库
+    def query(self, sql, callback=None, **kwargs):
+        query = self.dbpool.runQuery(sql)  # 调用查询的方法
+        if callback and callable(callback):
+            query.addCallback(callback, kwargs)
 
-def insert_data(data_, table, **kwargs):
-    '''insert data into database'''
-    insertSQL = "insert into `" + table + "`(%s) values (%s)"
-    keys = list(data_.keys())
-    fields = ','.join(['`%s`' % k for k in keys])
-    qm = ','.join(['%s'] * len(keys))
-    sql = insertSQL % (fields, qm)
-    data = [data_[k] for k in keys]
-    exec_sql(sql, data, **kwargs)
+    def exec_sql(self, sql, callback=None, data='', **kwargs):
+        '''execute insert/update/delete sql operation'''
 
+        if data == '':
+            query = self.dbpool.runInteraction(self._conditional_execute, sql)  # 调用插入的方法
+            query.addErrback(self._handle_error, data)  # 调用异常处理方法
+        else:
+            query = self.dbpool.runInteraction(self._conditional_execute, sql, data=data)  # 调用插入的方法
+            query.addErrback(self._handle_error, data)  # 调用异常处理方法
+        query.addCallback(self._handleSuccess)
+        if callback:
+            query.addCallback(callback)
+        return data
 
-def adb_connect_db(db_type, **kwargs):
-    '''
-    db_type-->"MySQLdb"
-    '''
-    dbpool = adbapi.ConnectionPool(db_type, **kwargs)
-    return dbpool
+    def insert_data(self, data_, table, **kwargs):
+        '''insert data into database'''
+        insertSQL = "insert into `" + table + "`(%s) values (%s)"
+        keys = list(data_.keys())
+        fields = ','.join(['`%s`' % k for k in keys])
+        qm = ','.join(['%s'] * len(keys))
+        sql = insertSQL % (fields, qm)
+        data = [data_[k] for k in keys]
+        self.exec_sql(sql, data, **kwargs)
 
+    def _handle_error(self, failue, data):
+        print('--------------database operation exception!!-----------------')
+        print('-------------------------------------------------------------')
+        print(failue)
+        print("data:{}".format(data))
 
-def adb_insert_data(item, table, db_type, **kwargs):
-    keys = list(item.keys())
-    fields = ','.join(keys)
-    qm = ','.join(['%s'] * len(keys))
-    insert_sql = "insert into `" + table + "`(%s) values (%s)"
-    sql = insert_sql % (fields, qm)
-    data = [item[k] for k in keys]
-    dbpool = adb_connect_db(db_type, **kwargs)
-    d = dbpool.runOperation(sql, data)
-    d.addCallback(insSuccess)
-    d.addErrback(insFailed, item)
-    dbpool.close()
+    def _handleSuccess(self, data):
+        print("success, data:", data)
 
-
-def insSuccess(data):
-    print("data inserted", data)
-
-
-def insFailed(exp, data):
-    print("insert failed", data, "error:", exp.getErrorMessage())
+    # 写入数据库中
+    def _conditional_execute(self, tx, sql, data=None):
+        tx.execute(sql, data)
