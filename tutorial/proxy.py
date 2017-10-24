@@ -6,10 +6,6 @@ from tutorial.settings import MYSQL_HOST, MYSQL_DBNAME, MYSQL_PORT, MYSQL_USER, 
 from .singleton import Singleton
 from .ipadd import IPPOOL_BACKUP_HTTP, IPPOOL_BACKUP_HTTPS
 
-dbapi = "MySQLdb"
-kwargs = {'user': MYSQL_USER, 'passwd': MYSQL_PASSWD, 'db': MYSQL_DBNAME, 'host': MYSQL_HOST, 'port': MYSQL_PORT,
-          'use_unicode': True}
-
 
 def counter(start_at=0):
     '''Function: count number

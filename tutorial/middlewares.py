@@ -13,7 +13,7 @@
 from .proxy import GetIp, counter
 import logging
 
-ips = GetIp().get_ips()
+ips = GetIp().get_ips(timeout=20)
 
 
 class ProxyMiddleware(object):
