@@ -49,9 +49,11 @@ class GetIp(Singleton):
         DBHelp().query(sql, self._after_query)
         self.result = None
 
-    def _after_query(self, rs):
-        print("success for query ips; len(result):{}".format(len(rs)))
-        self.result = rs
+    def _after_query(self, **args):
+        print("success for query ips; len(args):{}".format(len(args)))
+        print("args[0]:{}".format(args[0]))
+        print("args[1]:{}".format(args[1]))
+        self.result = args[0]
 
     def del_ip(self, record):
         '''delete ip that can not use'''
