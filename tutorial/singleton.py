@@ -1,3 +1,5 @@
+# encoding = utf8
+
 class Singleton(object):
     '''Signal instance example.'''
 

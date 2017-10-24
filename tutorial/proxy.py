@@ -1,8 +1,10 @@
+# encoding = utf8
 from .handledb import DBHelp
 import urllib.request, urllib.error, urllib.parse
-
+import time
 from tutorial.settings import MYSQL_HOST, MYSQL_DBNAME, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWD
 from .singleton import Singleton
+from .ipadd import IPPOOL_BACKUP_HTTP, IPPOOL_BACKUP_HTTPS
 
 dbapi = "MySQLdb"
 kwargs = {'user': MYSQL_USER, 'passwd': MYSQL_PASSWD, 'db': MYSQL_DBNAME, 'host': MYSQL_HOST, 'port': MYSQL_PORT,
@@ -85,11 +87,18 @@ class GetIp(Singleton):
                 self.del_ip(record)
                 return False
 
-    def get_ips(self):
+    def get_ips(self, timeout=10):
         print("Proxy getip was executed.")
-
-        http = [h[0:2] for h in self.result if h[2] == "HTTP" and self.judge_ip(h)]
-        https = [h[0:2] for h in self.result if h[2] == "HTTPS" and self.judge_ip(h)]
+        count = 0
+        while not self.result and timeout and count < timeout:
+            time.sleep(1)
+            count += 1
+        if not self.result:
+            http = IPPOOL_BACKUP_HTTP
+            https = IPPOOL_BACKUP_HTTPS
+        else:
+            http = [h[0:2] for h in self.result if h[2] == "HTTP" and self.judge_ip(h)]
+            https = [h[0:2] for h in self.result if h[2] == "HTTPS" and self.judge_ip(h)]
         print("Http: ", len(http), "Https: ", len(https))
 
         return {"http": http, "https": https}
