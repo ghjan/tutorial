@@ -47,6 +47,7 @@ class GetIp(Singleton):
         ORDER BY `proxy`.`TYPE` ASC
         LIMIT 50 '''
         DBHelp().query(sql, self._after_query)
+        self.result = None
 
     def _after_query(self, rs):
         print("success for query ips; len(result):{}".format(len(rs)))
