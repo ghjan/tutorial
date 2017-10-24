@@ -5,52 +5,36 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
+# from scrapy import signals
+# Importing base64 library because we'll need it ONLY in case
+# if the proxy we are going to use requires authentication
+# import base64
+
+from .proxy import GetIp, counter
+import logging
+
+ips = GetIp().get_ips()
 
 
-class TutorialSpiderMiddleware(object):
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy_py2 acts as if the spider middleware does not modify the
-    # passed objects.
+class ProxyMiddleware(object):
+    http_n = 0  # counter for http requests
+    https_n = 0  # counter for https requests
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+    # overwrite process request
+    def process_request(self, request, spider):
+        # Set the location of the proxy
+        if request.url.startswith("http://"):
+            n = ProxyMiddleware.http_n
+            n = n if n < len(ips['http']) else 0
+            request.meta['proxy'] = "http://%s:%d" % (
+                ips['http'][n][0], int(ips['http'][n][1]))
+            logging.info('Squence - http: %s - %s' % (n, str(ips['http'][n])))
+            ProxyMiddleware.http_n = n + 1
 
-    def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
-
-        # Should return None or raise an exception.
-        return None
-
-    def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
-
-        # Must return an iterable of Request, dict or Item objects.
-        for i in result:
-            yield i
-
-    def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Response, dict
-        # or Item objects.
-        pass
-
-    def process_start_requests(self, start_requests, spider):
-        # Called with the start requests of the spider, and works
-        # similarly to the process_spider_output() method, except
-        # that it doesn’t have a response associated.
-
-        # Must return only requests (not items).
-        for r in start_requests:
-            yield r
-
-    def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        if request.url.startswith("https://"):
+            n = ProxyMiddleware.https_n
+            n = n if n < len(ips['https']) else 0
+            request.meta['proxy'] = "https://%s:%d" % (
+                ips['https'][n][0], int(ips['https'][n][1]))
+            logging.info('Squence - https: %s - %s' % (n, str(ips['https'][n])))
+            ProxyMiddleware.https_n = n + 1
