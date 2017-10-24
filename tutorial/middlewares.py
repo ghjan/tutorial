@@ -9,11 +9,12 @@
 # Importing base64 library because we'll need it ONLY in case
 # if the proxy we are going to use requires authentication
 # import base64
-
+import time
 from .proxy import GetIp, counter
+from .ipadd import IPPOOL_BACKUP_HTTP, IPPOOL_BACKUP_HTTPS
 import logging
 
-ips = GetIp().get_ips(timeout=20)
+GetIp_Single = GetIp()
 
 
 class ProxyMiddleware(object):
@@ -22,6 +23,19 @@ class ProxyMiddleware(object):
 
     # overwrite process request
     def process_request(self, request, spider):
+        count = 0
+        timeout = 10
+        while not GetIp_Single.result and timeout and count < timeout:
+            time.sleep(1)
+            count += 1
+        ips = {}
+        if not GetIp_Single.result:
+            print("use ipadd_backup!")
+            ips['http'] = [item.split(':') for item in IPPOOL_BACKUP_HTTP]
+            ips['https'] = [item.split(':') for item in IPPOOL_BACKUP_HTTPS]
+        else:
+            print("use result successfully!")
+            ips = GetIp().get_ips()
         # Set the location of the proxy
         if request.url.startswith("http://"):
             n = ProxyMiddleware.http_n

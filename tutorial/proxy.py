@@ -86,18 +86,9 @@ class GetIp(Singleton):
 
     def get_ips(self, timeout=10):
         print("Proxy getip was executed.")
-        count = 0
-        while not self.result and timeout and count < timeout:
-            time.sleep(1)
-            count += 1
-        if not self.result:
-            print("use ipadd_backup!")
-            http = [item.split(':') for item in IPPOOL_BACKUP_HTTP]
-            https = [item.split(':') for item in IPPOOL_BACKUP_HTTPS]
-        else:
-            print("use result successfully!")
-            http = [h[0:2] for h in self.result if h[2] == "HTTP" and self.judge_ip(h)]
-            https = [h[0:2] for h in self.result if h[2] == "HTTPS" and self.judge_ip(h)]
-        print("Http: ", len(http), "Https: ", len(https))
+
+        http = [h[0:2] for h in self.result if h[2] == "HTTP" and self.judge_ip(h)]
+        https = [h[0:2] for h in self.result if h[2] == "HTTPS" and self.judge_ip(h)]
+        print("get_ips, Http: ", len(http), "Https: ", len(https))
 
         return {"http": http, "https": https}
