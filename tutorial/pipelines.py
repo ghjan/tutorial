@@ -20,11 +20,6 @@ import codecs
 import json
 
 
-class TutorialPipeline(object):
-    def process_item(self, item, spider):
-        return item
-
-
 class JsonWithEncodingPipeline(object):
     '''保存到文件中对应的class
        1、在settings.py文件中配置

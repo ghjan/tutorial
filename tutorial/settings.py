@@ -57,6 +57,9 @@ ROBOTSTXT_OBEY = False
 DOWNLOAD_DELAY = 3
 CONCURRENT_REQUESTS_PER_IP = 4
 
+# Disable cookies (enabled by default)
+COOKIES_ENABLED = False
+
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
