@@ -11,7 +11,7 @@ try:  # py3
 
     CURSORCLASS = pymysql.cursors.DictCursor
     pymysql.install_as_MySQLdb()
-except: # py2
+except:  # py2
     import MySQLdb
 
     CURSORCLASS = MySQLdb.cursors.DictCursor
