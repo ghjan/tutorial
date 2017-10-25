@@ -32,7 +32,7 @@ class ProxyMiddleware(object):
                 except Exception as e:
                     print("r:{}".format(r))
                     print(e)
-        thisip = self._get_address(request)
+        thisip = self._get_address(request['request'])
         print("this is ip:" + thisip)
         if request:
             request['request'].meta["proxy"] = thisip
